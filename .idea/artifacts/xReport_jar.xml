@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="xReport:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/xReport_jar</output-path>
+    <root id="archive" name="xReport.jar">
+      <element id="module-output" name="xReport" />
+    </root>
+  </artifact>
+</component>

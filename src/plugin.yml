@@ -1,0 +1,8 @@
+name: xReport
+main: me.TheKawaiiAsian.xReport.Core
+author: TheKawaiiAsian
+version: 1.0
+description: Report Plugin
+
+commands:
+    report:
