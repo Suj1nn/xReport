@@ -1,13 +1,16 @@
 package me.TheKawaiiAsian.xReport;
 
+import me.TheKawaiiAsian.xReport.commands.CommandManager;
 import me.TheKawaiiAsian.xReport.commands.ReportCommand;
 import me.TheKawaiiAsian.xReport.listener.ReportListener;
 import me.TheKawaiiAsian.xReport.utils.ConfigFile;
 import me.TheKawaiiAsian.xReport.utils.MySQL;
+import me.TheKawaiiAsian.xReport.utils.NMSManager;
 import me.TheKawaiiAsian.xReport.utils.ReportManager;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
+import java.util.ArrayList;
 
 /**
  * *******************************************************************
@@ -24,6 +27,8 @@ public class Core extends JavaPlugin{
     private static Core instance;
     private static ReportManager reportManager;
     private static MySQL mySQL;
+    private static NMSManager nmsManager;
+    private static ArrayList<Player> reportingOther;
 
     public static Core getInstance() {
         return instance;
@@ -37,10 +42,22 @@ public class Core extends JavaPlugin{
         return mySQL;
     }
 
+    public static NMSManager getNmsManager() {
+        return nmsManager;
+    }
+
+    public static ArrayList<Player> getReportingOther() {
+        return reportingOther;
+    }
+
     public void onEnable() {
         instance = this;
 
         ConfigFile.reloadConfig();
+        ConfigFile.getConfig().addDefault("Username", "username");
+        ConfigFile.getConfig().addDefault("Password", "password");
+        ConfigFile.getConfig().addDefault("Database", "database");
+        ConfigFile.getConfig().addDefault("Port", "port");
         ConfigFile.getConfig().options().copyDefaults(true);
         ConfigFile.saveConfig();
 
@@ -48,9 +65,12 @@ public class Core extends JavaPlugin{
         mySQL.createTable();
 
         reportManager = new ReportManager();
+        nmsManager = new NMSManager();
+        reportingOther = new ArrayList<>();
 
         getCommand("report").setExecutor(new ReportCommand());
-        getServer().getPluginManager().registerEvents(new ReportListener(), this  );
+        getCommand("xreport").setExecutor(new CommandManager());
+        getServer().getPluginManager().registerEvents(new ReportListener(), this);
 
 
     }
@@ -61,6 +81,8 @@ public class Core extends JavaPlugin{
         instance = null;
 
     }
+
+    //§dx§5Report
 
 
 }

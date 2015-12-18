@@ -1,7 +1,6 @@
 package me.TheKawaiiAsian.xReport.utils;
 
 import me.TheKawaiiAsian.xReport.Core;
-import org.bukkit.Bukkit;
 
 import java.sql.*;
 
@@ -65,7 +64,7 @@ public class MySQL {
     public void createTable () {
 
         try {
-            executeUpdate("CREATE TABLE IF NOT EXISTS `xReportManager` (ID INT NOT NULL AUTO_INCREMENT, PlayerUUID VARCHAR(100), PlayerName VARCHAR(100), ReporterUUID VARCHAR(100), ReporterName VARCHAR(100), ReportReason VARCHAR(100), PRIMARY KEY (ID))");
+            executeUpdate("CREATE TABLE IF NOT EXISTS `xReportManager` (ID INT NOT NULL AUTO_INCREMENT, PlayerUUID VARCHAR(100), PlayerName VARCHAR(100), ReporterUUID VARCHAR(100), ReporterName VARCHAR(100), ReportReason VARCHAR(100), ReportTime VARCHAR(100), PRIMARY KEY (ID))");
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -1,13 +1,11 @@
 package me.TheKawaiiAsian.xReport.commands;
 
 import me.TheKawaiiAsian.xReport.Core;
-import me.TheKawaiiAsian.xReport.utils.UUIDManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 /**
  * *******************************************************************
@@ -24,8 +22,6 @@ public class ReportCommand implements CommandExecutor{
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String Label, String[] args) {
 
-        // /report <Player> v
-
         if (!(sender instanceof Player)) {
             sender.sendMessage("§4§lPLAYER ONLY COMMAND!");
             return true;
@@ -38,20 +34,15 @@ public class ReportCommand implements CommandExecutor{
             return true;
         }
 
-        UUID uuid = null;
+        Player target = Bukkit.getServer().getPlayer(args[0]);
 
-        try {
-            uuid = UUIDManager.getUUIDOf(args[0]);
-            player.sendMessage("§5§l>> §dReporting §r" + args[0] + " §d..." );
-        } catch (Exception e) {
-            sender.sendMessage("§4§l>> §cPlayer not found! Please check spelling.");
+        if (target == null) {
+            player.sendMessage("§4§l>> §cCould not find player! Please check spelling.");
+            return true;
         }
 
-        try {
-            player.openInventory(Core.getReportManager().reportInventory(uuid));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        player.openInventory(Core.getReportManager().reportInventory(target));
+        player.sendMessage("§5§l>> §dReporting " + target.getName() + " §d...");
 
         return true;
     }

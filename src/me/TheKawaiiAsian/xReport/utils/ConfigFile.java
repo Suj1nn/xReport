@@ -30,7 +30,6 @@ public class ConfigFile {
     public static void reloadConfig() {
         if (file == null) {
             file = new File(Core.getInstance().getDataFolder(), "config.yml");
-
         }
         config = YamlConfiguration.loadConfiguration(file);
     }

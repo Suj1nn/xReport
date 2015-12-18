@@ -8,9 +8,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * *******************************************************************
@@ -24,20 +25,53 @@ import java.util.UUID;
  */
 public class ReportManager {
 
-    public void reportPlayer (UUID playerUUID, String reason, UUID reporterUUID) {
+    public void reportPlayer(Player player, Player reporter, String reason) {
 
         try {
-            Core.getMySQL().executeUpdate("INSERT INTO `xReportManager`(`PlayerUUID`, `ReporterUUID`, `ReportReason`) VALUES ('" + playerUUID.toString() + "','" + reporterUUID  + "','" + reason + "')");
+            Date date = new Date();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+            Core.getMySQL().executeUpdate("INSERT INTO `xReportManager`(`PlayerUUID`, `PlayerName`, `ReporterUUID`, `ReporterName`, `ReportReason`, `ReportTime`) VALUES ('" + player.getUniqueId().toString() + "','" + player.getName() + "','" + reporter.getUniqueId().toString() + "','" + reporter.getName() + "','" + reason + "','" + simpleDateFormat.format(date) + "')");
         } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public Inventory reportInventory (UUID targetUUID) throws Exception {
+    public String[] getLatestReports() {
 
-        Inventory inv = Bukkit.createInventory(null, 18, "§b§lReporting §c" + new NameFetcher(Arrays.asList(targetUUID)).call().toString().replace("{" + targetUUID, "").replace("}", "").replace("=", ""));
+        String[] array = new String[10];
+
+        try {
+            ResultSet rs = Core.getMySQL().getResultSet("SELECT * FROM `xReportManager` ORDER BY CONVERT(ID, UNSIGNED INTEGER) DESC LIMIT 10");
+
+            for (int ex = 0; rs.next(); ex++) {
+                array[ex] = ("§bID: §r" + rs.getString("ID") + " §7§l| §6Player: §r" + rs.getString("PlayerName") + " §7§l| §bReport: §r" + rs.getString("ReportReason") + " §7§l| §6ReporterName: §r" + rs.getString("ReporterName") + " §7§l| §bReport Time: §r" + rs.getString("ReportTime") + "\n\n");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return array;
+    }
+
+    public String getReport (Integer ID) {
+
+        try {
+            ResultSet rs = Core.getMySQL().getResultSet("SELECT * FROM `xReportManager` WHERE ID='" + ID + "'");
+
+            if (rs.next()) {
+                return ("§6Player: §r" + rs.getString("PlayerName") + " §7§l| §bReport: §r" + rs.getString("ReportReason") + " §7§l| §6ReporterName: §r" + rs.getString("ReporterName") + " §7§l| §bReport Time: §r" + rs.getString("ReportTime"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "§4§l>> §cReport not found. c ";
+    }
+
+
+
+    public Inventory reportInventory (Player player) {
+
+        Inventory inv = Bukkit.createInventory(null, 18, "§b§lReporting §c" + player.getName());
 
         {
             ItemStack item = new ItemStack(Material.DIAMOND_SWORD);
